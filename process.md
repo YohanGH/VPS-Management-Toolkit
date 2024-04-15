@@ -26,17 +26,38 @@ Ce script crée un utilisateur sans privilèges d'administration. Voici le conte
 
 ```bash
 #!/bin/bash
-# Ce script crée un utilisateur avec des droits limités.
+# Script pour créer des utilisateurs restreints sur le VPS
 
+# Vérification des privilèges root
 if [ "$(id -u)" != "0" ]; then
-   echo "Ce script doit être exécuté avec des droits d'administrateur" 1>&2
-   exit 1
+    echo "Ce script doit être exécuté en tant que root." >&2
+    exit 1
 fi
 
-read -p "Entrez le nom de l'utilisateur à créer: " username
-useradd -m -s /bin/bash "$username"
-echo "$username:UNPASSWORDSECRETPARDEFAUT" | chpasswd
-echo "Utilisateur $username créé avec succès avec des droits limités."
+# Création de plusieurs utilisateurs à partir d'une liste
+echo "Entrez les noms d'utilisateur séparés par un espace:"
+read -a usernames
+
+for username in "${usernames[@]}"
+do
+    # Vérifie si l'utilisateur existe déjà
+    if id "$username" &>/dev/null; then
+        echo "L'utilisateur '$username' existe déjà." >&2
+        continue
+    fi
+
+    # Création de l'utilisateur avec un shell standard et sans ajout au groupe sudo
+    useradd -m -s /bin/bash -G users "$username"
+
+    # Définition d'un mot de passe temporaire et forçage de la modification du mot de passe à la première connexion
+    echo "Définissez un mot de passe temporaire pour $username:"
+    passwd "$username"
+    passwd -e "$username"
+
+    # Confirmation de la création de l'utilisateur
+    echo "Utilisateur '$username' créé avec succès avec des droits limités."
+    echo "L'utilisateur devra changer son mot de passe lors de la prochaine connexion."
+done
 ```
 
 ## Explication
