@@ -55,6 +55,12 @@ ssh username@vps-address
 
 Suivez les instructions détaillées dans les fichiers `procedure.md` et `process.md` pour comprendre comment utiliser les scripts et effectuer les tâches de gestion du VPS.
 
+### Préparation des Scripts
+
+```bash
+chmod u+x nom_du_script.sh
+```
+
 ## Arborescence
 
 /VPS_Management_Project
