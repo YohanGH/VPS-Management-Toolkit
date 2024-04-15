@@ -63,6 +63,7 @@ chmod u+x nom_du_script.sh
 
 ## Arborescence
 
+```
 /VPS_Management_Project
 |-- README.md             # Document principal expliquant le projet, son installation et son usage.
 |-- procedure.md          # Document détaillant les procédures à suivre pour les différentes tâches.
@@ -76,6 +77,8 @@ chmod u+x nom_du_script.sh
 |   |-- vps_status.log   # Fichier de log où sont enregistrées les caractéristiques du VPS.
 |-- docs                 # Dossier pour la documentation supplémentaire, si nécessaire.
 |-- LICENSE              # Fichier décrivant la licence sous laquelle le projet est distribué.
+
+```
 
 ## Contribution
 
