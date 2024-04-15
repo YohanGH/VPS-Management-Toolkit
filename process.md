@@ -55,13 +55,58 @@ Ce script supprime les utilisateurs qui ont été créés il y a plus de 12 mois
 
 ```bash
 #!/bin/bash
-# Script pour supprimer les utilisateurs créés il y a 12 mois.
+# Script pour supprimer les comptes utilisateurs expirés sur le VPS
 
-find /home -maxdepth 1 -type d -ctime +365 -exec basename {} \; | while read user; do
-    userdel -r "$user"
-    echo "Utilisateur $user supprimé."
+# Vérification des privilèges root
+if [ "$(id -u)" != "0" ]; then
+    echo "Ce script doit être exécuté en tant que root." >&2
+    exit 1
+fi
+
+# Définition du répertoire des utilisateurs
+USER_HOME_DIR="/home"
+
+# Date limite: comptes plus anciens que 365 jours
+MAX_DAYS=365
+
+# Trouver et supprimer les comptes utilisateurs expirés
+find "$USER_HOME_DIR" -maxdepth 1 -type d -ctime +$MAX_DAYS -exec basename {} \; | while read username; do
+    # Vérifier que le répertoire utilisateur n'est pas un dossier système
+    if [ "$username" != "lost+found" ]; then
+        # Suppression de l'utilisateur et de son répertoire home
+        userdel -r "$username"
+        if [ $? -eq 0 ]; then
+            echo "Utilisateur $username supprimé avec succès."
+        else
+            echo "Échec de la suppression de l'utilisateur $username." >&2
+        fi
+    fi
 done
 ```
+### Rendre le script exécutable
+
+```bash
+chmod u+x ./scripts/delete_expired_users.sh
+```
+
+### Éditer le fichier crontab
+
+```bash
+sudo crontab -e
+```
+
+### Ajouter une entrée cron
+
+- Dans l'éditeur crontab qui s'ouvre, ajoutez la ligne suivante à la fin du fichier pour exécuter le script une fois par mois, par exemple le premier jour de chaque mois à minuit :
+
+```cron
+0 0 1 * * ./scripts/delete_expired_users.sh >> /var/log/delete_users.log 2>&1
+```
+
+### Sauvegarder et quitter l'éditeur crontab
+
+- Sauvegardez les modifications et quittez l'éditeur. Sur la plupart des éditeurs dans le terminal, cela peut être fait avec `Ctrl+O` pour sauvegarder et `Ctrl+X` pour quitter si vous utilisez Nano, ou `:wq` pour Vim.
+
 ## Explication
 
 - Ce script recherche dans le répertoire /home les dossiers créés il y a plus de 365 jours.
