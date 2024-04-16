@@ -35,12 +35,6 @@ Ce document décrit les étapes détaillées pour la configuration initiale, la 
         ssh-copy-id -i ~/.ssh/mykey.pub username@vps-address
         ```
 
-3. **Connexion au VPS :**
-    - Connectez-vous en utilisant la clé privée générée :
-        ```bash
-        ssh -i ~/.ssh/mykey username@vps-address
-        ```
-
 ### Modifier le mot de passe initial
 
 -   Une fois connecté, changez immédiatement votre mot de passe :
