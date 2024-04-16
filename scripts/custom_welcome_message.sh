@@ -6,7 +6,7 @@
 #    By: YohanGH <YohanGH@proton.me>                    //    ''     Code      #
 #                                                      (|     | )              #
 #    Created: 2024/04/15 20:49:34 by YohanGH           '__   _/_               #
-#    Updated: 2024/04/15 20:53:20 by YohanGH          (___)=(___)              #
+#    Updated: 2024/04/16 11:20:42 by YohanGH          (___)=(___)              #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,7 +26,7 @@ read -p "Entrez le nom d'utilisateur pour configurer le message de bienvenue: " 
 # Vérifie si l'utilisateur existe
 if id "$username" &>/dev/null; then
     # Ajoute le message de bienvenue dans le fichier .bashrc de l'utilisateur
-    echo "echo 'Bonjour, $username! Voici les nouvelles de la promotion XYZ.' | cowsay" >> /home/$username/.bashrc
+    echo "echo 'Bonjour, $username! Voici les nouvelles de la promotion Lyon 2024. By Regnier Yohan' | cowsay" >> /home/$username/.bashrc
 
     echo "Message de bienvenue configuré pour l'utilisateur $username."
 else
