@@ -150,6 +150,30 @@ echo "Bienvenue, $(whoami)! Voici les nouvelles de la promotion XYZ."
 - Ce code utilise `echo` pour afficher un message chaque fois que l'utilisateur ouvre un terminal.
 - `$(whoami)` est une commande qui retourne le nom de l'utilisateur actuellement connecté.
 
+**Type de fichier attendu :** Un fichier texte simple, avec un nom d'utilisateur par ligne.
+
+**Exemple de fichier :**
+
+```txt
+alice
+bob
+charlie
+```
+
+**Conventions à respecter :**
+
+- Assurez-vous que chaque nom d'utilisateur est sur une nouvelle ligne sans espaces supplémentaires ni caractères spéciaux.
+- Le fichier ne doit pas contenir de lignes vides.
+- Utilisez des noms d'utilisateur valides qui existent sur le système.
+
+**Usage**
+
+Pour utiliser le script, exécutez-le avec le chemin du fichier en argument comme suit :
+
+```bash
+sudo ./custom_welcome_message.sh chemin/vers/le/fichier_utilisateurs.txt
+```
+
 ## Documentation et Maintenance
 
 - [Link repos]
