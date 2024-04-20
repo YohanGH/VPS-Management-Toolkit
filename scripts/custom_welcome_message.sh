@@ -6,7 +6,7 @@
 #    By: YohanGH <YohanGH@proton.me>                    //    ''     Code      #
 #                                                      (|     | )              #
 #    Created: 2024/04/15 20:49:34 by YohanGH           '__   _/_               #
-#    Updated: 2024/04/16 12:30:08 by YohanGH          (___)=(___)              #
+#    Updated: 2024/04/20 22:11:31 by YohanGH          (___)=(___)              #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,17 +20,32 @@ if [ "$(id -u)" -ne 0 ]; then
     exit 1
 fi
 
-# Lit le nom de l'utilisateur pour lequel configurer le message
-read -p "Entrez le nom d'utilisateur pour configurer le message de bienvenue: " username
-
-# Vérifie si l'utilisateur existe
-if id "$username" &>/dev/null; then
-    # Ajoute le message de bienvenue dans le fichier .bashrc de l'utilisateur
-    echo "echo 'Bonjour, $username! Voici les nouvelles de la promotion Lyon 2024. By Regnier Yohan'" >> /home/$username/.bashrc
-
-    echo "Message de bienvenue configuré pour l'utilisateur $username."
-else
-    echo "L'utilisateur spécifié n'existe pas." >&2
+# Vérifie si un fichier a été fourni en argument
+if [ $# -eq 0 ]; then
+    echo "Usage: $0 <fichier_noms_utilisateurs>" >&2
     exit 1
 fi
 
+filename="$1"
+
+# Vérifie si le fichier spécifié existe
+if [ ! -f "$filename" ]; then
+    echo "Le fichier spécifié n'existe pas." >&2
+    exit 1
+fi
+
+# Obtient l'année en cours
+current_year=$(date +"%Y")
+
+# Lit et configure le message pour chaque utilisateur dans le fichier
+while IFS= read -r username
+do
+    # Vérifie si l'utilisateur existe
+    if id "$username" &>/dev/null; then
+        # Ajoute le message de bienvenue dans le fichier .bashrc de l'utilisateur
+        echo "echo 'Bonjour, $username! Voici les nouvelles de la promotion Lyon $current_year. By Regnier Yohan'" >> /home/$username/.bashrc
+        echo "Message de bienvenue configuré pour l'utilisateur $username."
+    else
+        echo "L'utilisateur spécifié ($username) n'existe pas." >&2
+    fi
+done < "$filename"
