@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # **************************************************************************** #
 #                                                                              #
 #                                                         .--.    No           #
@@ -6,11 +8,9 @@
 #    By: YohanGH <YohanGH@proton.me>                    //    ''     Code      #
 #                                                      (|     | )              #
 #    Created: 2024/04/15 20:49:34 by YohanGH           '__   _/_               #
-#    Updated: 2024/04/20 22:11:31 by YohanGH          (___)=(___)              #
+#    Updated: 2024/04/20 22:26:03 by YohanGH          (___)=(___)              #
 #                                                                              #
 # **************************************************************************** #
-
-#!/bin/bash
 
 # Script pour configurer un message de bienvenue personnalisé pour les utilisateurs sur le VPS
 
@@ -42,8 +42,9 @@ while IFS= read -r username
 do
     # Vérifie si l'utilisateur existe
     if id "$username" &>/dev/null; then
-        # Ajoute le message de bienvenue dans le fichier .bashrc de l'utilisateur
-        echo "echo 'Bonjour, $username! Voici les nouvelles de la promotion Lyon $current_year. By Regnier Yohan'" >> /home/$username/.bashrc
+        # Construit le message de bienvenue
+        welcome_message="echo -e \"e[32mPromotion $current_year\n\e[34mBonjour, $username! \n\e[33mBy Regnier Yohan\e[0m\""
+        echo "$welcome_message" >> /home/$username/.bashrc
         echo "Message de bienvenue configuré pour l'utilisateur $username."
     else
         echo "L'utilisateur spécifié ($username) n'existe pas." >&2
