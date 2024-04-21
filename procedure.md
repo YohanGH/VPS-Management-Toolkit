@@ -76,7 +76,7 @@ echo "Disk Usage:" && df -h
 -   Pour configurer un message de bienvenue personnalisé pour chaque utilisateur, modifiez le fichier .bashrc de l'utilisateur :
 
 ```bash
-echo 'echo "Bienvenue, $(whoami)! Voici les nouvelles de la promotion XYZ."' | sudo tee -a /home/newusername/.bashrc
+welcome_message="echo -e \"\e[32mPromotion $current_year\n\e[34mBonjour, $username! \n\e[33mBy Regnier Yohan\e[0m\""
 ```
 
 ### Documentation et Référence
