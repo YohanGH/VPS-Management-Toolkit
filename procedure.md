@@ -48,11 +48,6 @@ Ce document décrit les étapes détaillées pour la configuration initiale, la 
 
 -   Utilisez le script suivant pour créer un nouvel utilisateur avec des restrictions :
 
-```bash
-sudo adduser --disabled-password newusername
-echo "newusername:temporary" | sudo chpasswd
-```
-
 ### Suppression Automatique des Comptes
 
 -   Configurez une tâche cron pour supprimer les comptes après 12 mois :
