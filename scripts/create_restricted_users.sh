@@ -6,7 +6,7 @@
 #    By: YohanGH <YohanGH@proton.me>                    //    ''     Code      #
 #                                                      (|     | )              #
 #    Created: 2024/04/15 20:47:51 by YohanGH           '__   _/_               #
-#    Updated: 2024/04/21 15:17:30 by YohanGH          (___)=(___)              #
+#    Updated: 2024/04/21 17:59:36 by YohanGH          (___)=(___)              #
 #                                                                              #
 # **************************************************************************** #
 
@@ -54,10 +54,12 @@ do
     fi
 
 	 # Vérifie si l'utilisateur existe déjà
-    if id "$username" &>/dev/null; then
-        echo "L'utilisateur '$username' existe déjà." | tee -a "$logfile"
-        continue
-    fi
+    if id "$username"; then
+		echo "L'utilisateur '$username' existe déjà." | tee -a "$logfile"
+		continue
+	else
+		echo "L'utilisateur '$username' n'existe pas." | tee -a "$logfile"
+	fi
 
 	# Création de l'utilisateur avec un shell standard et sans ajout au groupe sudo
     if useradd -m -s /bin/bash -G users "$username"; then
