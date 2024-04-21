@@ -6,18 +6,22 @@
 #    By: YohanGH <YohanGH@proton.me>                    //    ''     Code      #
 #                                                      (|     | )              #
 #    Created: 2024/04/15 20:47:51 by YohanGH           '__   _/_               #
-#    Updated: 2024/04/21 15:05:48 by YohanGH          (___)=(___)              #
+#    Updated: 2024/04/21 15:17:30 by YohanGH          (___)=(___)              #
 #                                                                              #
 # **************************************************************************** #
 
 #!/bin/bash
 # Script pour créer des utilisateurs restreints sur le VPS
 
+echo "Début du script..."
+
 # Vérification des privilèges root
 if [ "$(id -u)" != "0" ]; then
     echo "Ce script doit être exécuté en tant que root." >&2
     exit 1
 fi
+
+echo "Exécuté en tant que root..."
 
 # Vérifie si un nom de fichier a été fourni en argument
 if [ $# -eq 0 ]; then
@@ -26,6 +30,7 @@ if [ $# -eq 0 ]; then
 fi
 
 filename="$1"
+echo "Fichier d'entrée: $filename"
 
 # Vérifie si le fichier spécifié existe
 if [ ! -f "$filename" ]; then
@@ -33,12 +38,15 @@ if [ ! -f "$filename" ]; then
     exit 1
 fi
 
+echo "Fichier trouvé, début de la création des utilisateurs..."
+
 # Chemin du fichier journal
 logfile="../log/user_creation.log"
 
 # Création de plusieurs utilisateurs à partir d'une liste
 while IFS= read -r username
 do
+	echo "Traitement de l'utilisateur: $username"
 	# Validation du nom d'utilisateur
     if [[ ! "$username" =~ ^[a-zA-Z0-9_]+$ ]]; then
         echo "Nom d'utilisateur '$username' invalide. Les noms d'utilisateur ne peuvent contenir que des lettres, des chiffres et des underscores." | tee -a "$logfile"
