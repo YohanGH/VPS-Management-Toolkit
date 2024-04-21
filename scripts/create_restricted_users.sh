@@ -6,7 +6,7 @@
 #    By: YohanGH <YohanGH@proton.me>                    //    ''     Code      #
 #                                                      (|     | )              #
 #    Created: 2024/04/15 20:47:51 by YohanGH           '__   _/_               #
-#    Updated: 2024/04/21 14:51:17 by YohanGH          (___)=(___)              #
+#    Updated: 2024/04/21 15:05:48 by YohanGH          (___)=(___)              #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,7 +34,7 @@ if [ ! -f "$filename" ]; then
 fi
 
 # Chemin du fichier journal
-logfile="/var/log/user_creation.log"
+logfile="../log/user_creation.log"
 
 # Création de plusieurs utilisateurs à partir d'une liste
 while IFS= read -r username
