@@ -43,7 +43,7 @@ do
     # Vérifie si l'utilisateur existe
     if id "$username" &>/dev/null; then
         # Construit le message de bienvenue
-        welcome_message="echo -e \"e[32mPromotion $current_year\n\e[34mBonjour, $username! \n\e[33mBy Regnier Yohan\e[0m\""
+        welcome_message="echo -e \"\e[32mPromotion $current_year\n\e[34mBonjour, $username! \n\e[33mBy Regnier Yohan\e[0m\""
         echo "$welcome_message" >> /home/$username/.bashrc
         echo "Message de bienvenue configuré pour l'utilisateur $username."
     else
