@@ -43,6 +43,12 @@ echo "Fichier trouvé, début de la création des utilisateurs..."
 # Chemin du fichier journal
 logfile="../log/user_creation.log"
 
+# Vérification de l'existence de la commande mysql
+if ! command -v mysql &> /dev/null; then
+	echo "La commande mysql n'est pas disponible. Veuillez installer MySQL (ou mieux, mariadb !) pour continuer." >&2
+    exit 1
+fi
+
 # Création de plusieurs utilisateurs à partir d'une liste
 while IFS= read -r username
 do
@@ -71,6 +77,14 @@ do
 
         echo "Utilisateur '$username' créé avec succès avec des droits limités." | tee -a "$logfile"
         echo "Mot de passe par défaut '1234' défini pour '$username'. L'utilisateur doit le changer à la première connexion." | tee -a "$logfile"
+
+	# Création de la base de données MySQL et de l'utilisateur MySQL associé
+        mysql -e "CREATE DATABASE ${username}_db;"
+        mysql -e "CREATE USER '${username}'@'localhost' IDENTIFIED BY '${username}';"
+        mysql -e "GRANT ALL PRIVILEGES ON ${username}_db.* TO '${username}'@'localhost';"
+        mysql -e "FLUSH PRIVILEGES;"
+        echo "Base de données '${username}_db' créée pour l'utilisateur MySQL '${username}' avec le mot de passe '${username}'." | tee -a "$logfile"
+
     else
         echo "Erreur lors de la création de l'utilisateur '$username'." | tee -a "$logfile"
     fi
