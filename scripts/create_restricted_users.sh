@@ -46,31 +46,35 @@ logfile="../log/user_creation.log"
 # Création de plusieurs utilisateurs à partir d'une liste
 while IFS= read -r username
 do
-	echo "Traitement de l'utilisateur: $username"
-	# Validation du nom d'utilisateur
+    echo "Traitement de l'utilisateur: $username"
+    # Validation du nom d'utilisateur
     if [[ ! "$username" =~ ^[a-zA-Z0-9_]+$ ]]; then
         echo "Nom d'utilisateur '$username' invalide. Les noms d'utilisateur ne peuvent contenir que des lettres, des chiffres et des underscores." | tee -a "$logfile"
         continue
     fi
 
-	 # Vérifie si l'utilisateur existe déjà
-    if id "$username"; then
-		echo "L'utilisateur '$username' existe déjà." | tee -a "$logfile"
-		continue
-	else
-		echo "L'utilisateur '$username' n'existe pas." | tee -a "$logfile"
-	fi
+    # Vérifie si l'utilisateur existe déjà
+    if id "$username" &>/dev/null; then
+        echo "L'utilisateur '$username' existe déjà." | tee -a "$logfile"
+        continue
+    else
+        echo "L'utilisateur '$username' n'existe pas." | tee -a "$logfile"
+    fi
 
-	# Création de l'utilisateur avec un shell standard et sans ajout au groupe sudo
+    # Création de l'utilisateur avec un shell standard et sans ajout au groupe sudo
     if useradd -m -s /bin/bash -G users "$username"; then
-		# Forcer le changement de mot de passe à la première connexion
-		passwd -de "$username"
+        # Définir le mot de passe par défaut
+        echo "$username:1234" | chpasswd
 
-    echo "Utilisateur '$username' créé avec succès avec des droits limités." | tee -a "$logfile"
-        echo "Mot de passe temporaire généré pour '$username'. L'utilisateur doit le changer à la première connexion." | tee -a "$logfile"
+        # Forcer le changement de mot de passe à la première connexion
+        chage -d 0 "$username"
+
+        echo "Utilisateur '$username' créé avec succès avec des droits limités." | tee -a "$logfile"
+        echo "Mot de passe par défaut '1234' défini pour '$username'. L'utilisateur doit le changer à la première connexion." | tee -a "$logfile"
     else
         echo "Erreur lors de la création de l'utilisateur '$username'." | tee -a "$logfile"
     fi
 done < "$filename"
 
 echo "Opération terminée. Vérifiez $logfile pour le journal détaillé des opérations."
+
