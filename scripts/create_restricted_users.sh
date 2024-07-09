@@ -43,34 +43,52 @@ echo "Fichier trouvé, début de la création des utilisateurs..."
 # Chemin du fichier journal
 logfile="../log/user_creation.log"
 
+# Vérification de l'existence de la commande mysql
+if ! command -v mysql &> /dev/null; then
+	echo "La commande mysql n'est pas disponible. Veuillez installer MySQL (ou mieux, mariadb !) pour continuer." >&2
+    exit 1
+fi
+
 # Création de plusieurs utilisateurs à partir d'une liste
 while IFS= read -r username
 do
-	echo "Traitement de l'utilisateur: $username"
-	# Validation du nom d'utilisateur
+    echo "Traitement de l'utilisateur: $username"
+    # Validation du nom d'utilisateur
     if [[ ! "$username" =~ ^[a-zA-Z0-9_]+$ ]]; then
         echo "Nom d'utilisateur '$username' invalide. Les noms d'utilisateur ne peuvent contenir que des lettres, des chiffres et des underscores." | tee -a "$logfile"
         continue
     fi
 
-	 # Vérifie si l'utilisateur existe déjà
-    if id "$username"; then
-		echo "L'utilisateur '$username' existe déjà." | tee -a "$logfile"
-		continue
-	else
-		echo "L'utilisateur '$username' n'existe pas." | tee -a "$logfile"
-	fi
+    # Vérifie si l'utilisateur existe déjà
+    if id "$username" &>/dev/null; then
+        echo "L'utilisateur '$username' existe déjà." | tee -a "$logfile"
+        continue
+    else
+        echo "L'utilisateur '$username' n'existe pas." | tee -a "$logfile"
+    fi
 
-	# Création de l'utilisateur avec un shell standard et sans ajout au groupe sudo
+    # Création de l'utilisateur avec un shell standard et sans ajout au groupe sudo
     if useradd -m -s /bin/bash -G users "$username"; then
-		# Forcer le changement de mot de passe à la première connexion
-		passwd -de "$username"
+        # Définir le mot de passe par défaut
+        echo "$username:1234" | chpasswd
 
-    echo "Utilisateur '$username' créé avec succès avec des droits limités." | tee -a "$logfile"
-        echo "Mot de passe temporaire généré pour '$username'. L'utilisateur doit le changer à la première connexion." | tee -a "$logfile"
+        # Forcer le changement de mot de passe à la première connexion
+        chage -d 0 "$username"
+
+        echo "Utilisateur '$username' créé avec succès avec des droits limités." | tee -a "$logfile"
+        echo "Mot de passe par défaut '1234' défini pour '$username'. L'utilisateur doit le changer à la première connexion." | tee -a "$logfile"
+
+	# Création de la base de données MySQL et de l'utilisateur MySQL associé
+        mysql -e "CREATE DATABASE ${username}_db;"
+        mysql -e "CREATE USER '${username}'@'localhost' IDENTIFIED BY '${username}';"
+        mysql -e "GRANT ALL PRIVILEGES ON ${username}_db.* TO '${username}'@'localhost';"
+        mysql -e "FLUSH PRIVILEGES;"
+        echo "Base de données '${username}_db' créée pour l'utilisateur MySQL '${username}' avec le mot de passe '${username}'." | tee -a "$logfile"
+
     else
         echo "Erreur lors de la création de l'utilisateur '$username'." | tee -a "$logfile"
     fi
 done < "$filename"
 
 echo "Opération terminée. Vérifiez $logfile pour le journal détaillé des opérations."
+

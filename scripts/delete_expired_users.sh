@@ -29,6 +29,13 @@ MAX_DAYS=365
 find "$USER_HOME_DIR" -maxdepth 1 -type d -ctime +$MAX_DAYS -exec basename {} \; | while read username; do
     # Vérifier que le répertoire utilisateur n'est pas un dossier système
     if [ "$username" != "lost+found" ]; then
+
+        # Suppression de la base de données MySQL associée
+        mysql -e "DROP DATABASE IF EXISTS ${username}_db;"
+        
+        # Suppression du compte utilisateur MySQL
+        mysql -e "DROP USER IF EXISTS '${username}'@'localhost';"
+
         # Suppression de l'utilisateur et de son répertoire home
         userdel -r "$username"
         if [ $? -eq 0 ]; then
